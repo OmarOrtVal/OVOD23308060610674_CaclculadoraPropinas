@@ -13,17 +13,12 @@ def main(page: ft.Page):
         keyboard_type=ft.KeyboardType.NUMBER
     )
     
-    porcentaje = ft.Text("8%", size=24)
-    total = ft.Text("$0.00", size=32, weight=ft.FontWeight.BOLD)
+    porcentaje = ft.Text("0%", size=24)
+    total = ft.Text("$0.00", size=32)
     cantidad_propina = ft.Text("$0.00", size=20)
     mensaje = ft.Text("")
     
-    def calcular(e):
-        if not monto.value:
-            mensaje.value = "Ingresa un monto válido"
-            page.update()
-            return
-        
+    def calcular(e):        
         try:
             m = float(monto.value)
             p = slider_propina.value
@@ -42,8 +37,8 @@ def main(page: ft.Page):
     slider_propina = ft.Slider(
         min=5,
         max=25,
-        divisions=8,
-        value=8,
+        divisions=7,
+        value=5,
         label="{value}%",
         width=250,
         on_change=calcular
@@ -51,7 +46,7 @@ def main(page: ft.Page):
     
     page.add(
         ft.Column([
-            ft.Text("PROPINAS", size=28, weight=ft.FontWeight.BOLD),
+            ft.Text("Calculadora de propinas", size=28),
             ft.Divider(height=20),
             
             monto,
