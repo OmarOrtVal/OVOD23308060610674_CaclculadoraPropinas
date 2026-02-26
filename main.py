@@ -2,30 +2,52 @@ import flet as ft
 
 def main(page: ft.Page):
     page.title = "Calculadora de Propinas"
-    page.window_width = 400
-    page.window_height = 600
+    page.window_width = 300
+    page.window_height = 500
     page.padding = 20
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     
-    monto = ft.TextField(label="Monto de cuenta", width=280)
-    porcentaje = ft.Text("0%", size=24)
-    total = ft.Text("0", size=32, weight=ft.FontWeight.BOLD)
+    monto = ft.TextField(
+        label="Monto de cuenta",
+        width=280,
+        keyboard_type=ft.KeyboardType.NUMBER
+    )
     
-    cantidad_propina = ft.Text("$0", size=20)
+    porcentaje = ft.Text("8%", size=24)
+    total = ft.Text("$0.00", size=32, weight=ft.FontWeight.BOLD)
+    cantidad_propina = ft.Text("$0.00", size=20)
+    mensaje = ft.Text("")
     
-    def calcular(p):
-        def _calcular(e):
-            try:
-                m = float(monto.value)
-                propina = m * (p / 100)
-                total.value = str(int(m + propina))
-                porcentaje.value = f"{p}%"
-                cantidad_propina.value = f"${propina:.0f}"
-                page.update()
-            except:
-                total.value = "Error - Ingresa un número"
-                page.update()
-        return _calcular
+    def calcular(e):
+        if not monto.value:
+            mensaje.value = "Ingresa un monto válido"
+            page.update()
+            return
+        
+        try:
+            m = float(monto.value)
+            p = slider_propina.value
+            propina = m * (p / 100)
+            
+            porcentaje.value = f"{int(p)}%"
+            cantidad_propina.value = f"${propina:.2f}"
+            total.value = f"${m + propina:.2f}"
+            mensaje.value = ""
+            
+        except:
+            mensaje.value = "Error - Ingresa solo números"
+        
+        page.update()
+    
+    slider_propina = ft.Slider(
+        min=5,
+        max=25,
+        divisions=8,
+        value=8,
+        label="{value}%",
+        width=250,
+        on_change=calcular
+    )
     
     page.add(
         ft.Column([
@@ -35,18 +57,9 @@ def main(page: ft.Page):
             monto,
             ft.Divider(height=20),
             
-            ft.Column([
-                ft.Row([
-                    ft.ElevatedButton("5%", on_click=calcular(5), expand=True),
-                    ft.ElevatedButton("8%", on_click=calcular(8), expand=True),
-                    ft.ElevatedButton("10%", on_click=calcular(10), expand=True),
-                    ft.ElevatedButton("13%", on_click=calcular(13), expand=True),
-                    ft.ElevatedButton("15%", on_click=calcular(15), expand=True),
-                    ft.ElevatedButton("18%", on_click=calcular(18), expand=True),
-                    ft.ElevatedButton("20%", on_click=calcular(20), expand=True),
-                    ft.ElevatedButton("25%", on_click=calcular(25), expand=True),
-                ]),
-            ]),
+            ft.Text("Selecciona el porcentaje"),
+            slider_propina,
+            porcentaje,
             
             ft.Divider(height=20),
             ft.Text("Cantidad de propina", size=14),
@@ -54,8 +67,12 @@ def main(page: ft.Page):
             
             ft.Divider(height=20),
             ft.Text("Total a pagar", size=16),
-            total
-        ])
+            total,
+            
+            ft.Divider(height=20),
+            mensaje
+        ],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     )
 
 ft.app(target=main)
